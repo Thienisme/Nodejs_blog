@@ -5,9 +5,9 @@ const users = require('../src/users/routes');
 
 module.exports = (app) => {
   app.use('/status', status);
-  app.use('/users', users);
+  app.use('/', users); // Remove /users prefix
   // app.use('/users', validateAuth.checkIfAuthenticated, getData.getGeoip, users);
-  app.use('*', (req, res) => {
+  app.use('*', (_, res) => {
     res.send('Not found!!!');
   });
 };

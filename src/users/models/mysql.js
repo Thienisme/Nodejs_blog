@@ -3,7 +3,9 @@ const { pool } = require('../../../services/mysql');
 const User = {
   create: async (userData) => {
     const { username, name, lastName, email, password } = userData;
-    const [result] = await pool.execute(
+    const [
+      result,
+    ] = await pool.execute(
       'INSERT INTO users (username, name, lastName, email, password) VALUES (?, ?, ?, ?, ?)',
       [username, name, lastName, email, password]
     );
@@ -11,10 +13,9 @@ const User = {
   },
 
   findByEmail: async (email) => {
-    const [rows] = await pool.execute(
-      'SELECT * FROM users WHERE email = ?',
-      [email]
-    );
+    const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [
+      email,
+    ]);
     return rows[0] || null;
   },
 
@@ -27,10 +28,7 @@ const User = {
   },
 
   findById: async (id) => {
-    const [rows] = await pool.execute(
-      'SELECT * FROM users WHERE id = ?',
-      [id]
-    );
+    const [rows] = await pool.execute('SELECT * FROM users WHERE id = ?', [id]);
     return rows[0] || null;
   },
 
@@ -43,7 +41,9 @@ const User = {
 
   update: async (id, userData) => {
     const { username, name, lastName, email } = userData;
-    const [result] = await pool.execute(
+    const [
+      result,
+    ] = await pool.execute(
       'UPDATE users SET username = ?, name = ?, lastName = ?, email = ? WHERE id = ?',
       [username, name, lastName, email, id]
     );
@@ -51,10 +51,7 @@ const User = {
   },
 
   delete: async (id) => {
-    const [result] = await pool.execute(
-      'DELETE FROM users WHERE id = ?',
-      [id]
-    );
+    const [result] = await pool.execute('DELETE FROM users WHERE id = ?', [id]);
     return result.affectedRows > 0;
   },
 };
