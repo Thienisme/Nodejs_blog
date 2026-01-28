@@ -12,6 +12,13 @@ const runMigrations = async () => {
       .filter(file => file.endsWith('.sql'))
       .sort();
 
+    // Ensure migrations table exists
+    await pool.execute(`CREATE TABLE IF NOT EXISTS migrations (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      filename VARCHAR(255) NOT NULL,
+      executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`);
+
     const [executed] = await pool.execute(
       'SELECT filename FROM migrations'
     );
@@ -26,14 +33,8 @@ const runMigrations = async () => {
           'utf8'
         );
         
-        const statements = sql
-          .split(';')
-          .map(stmt => stmt.trim())
-          .filter(stmt => stmt && !stmt.startsWith('--') && stmt.toLowerCase().includes('create') || stmt.toLowerCase().includes('index'));
-        
-        for (const statement of statements) {
-          await pool.execute(statement);
-        }
+// Execute full SQL file in one call (multipleStatements enabled on pool)
+    await pool.query(sql);
         
         await pool.execute(
           'INSERT INTO migrations (filename) VALUES (?)',
@@ -57,6 +58,13 @@ const showStatus = async () => {
     const files = fs.readdirSync(migrationsDir)
       .filter(file => file.endsWith('.sql'))
       .sort();
+
+    // Ensure migrations table exists
+    await pool.execute(`CREATE TABLE IF NOT EXISTS migrations (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      filename VARCHAR(255) NOT NULL,
+      executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`);
 
     const [executed] = await pool.execute(
       'SELECT filename, executed_at FROM migrations ORDER BY filename'
@@ -87,6 +95,13 @@ const showStatus = async () => {
 
 const rollback = async () => {
   try {
+    // Ensure migrations table exists
+    await pool.execute(`CREATE TABLE IF NOT EXISTS migrations (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      filename VARCHAR(255) NOT NULL,
+      executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`);
+
     const [executed] = await pool.execute(
       'SELECT filename FROM migrations ORDER BY executed_at DESC LIMIT 1'
     );

@@ -9,6 +9,8 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  // Allow executing multiple statements in a single query (used by migrations)
+  multipleStatements: true,
 });
 
 const initDatabase = async () => {

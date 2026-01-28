@@ -32,4 +32,10 @@ router.get('/api/v1/profile', authMiddleware, (req, res) => {
   });
 });
 
+// Refresh access token (using refresh token cookie or body)
+router.post('/api/v1/refresh', controller.refreshToken);
+
+// Logout — revoke refresh token(s)
+router.post('/api/v1/logout', authMiddleware, controller.logout);
+
 module.exports = router;
